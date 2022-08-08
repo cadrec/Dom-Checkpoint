@@ -6,10 +6,16 @@
 
 function updateCoffeeView(coffeeQty) {
   // your code here
+  //https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById
+  const qty = document.getElementById('coffee_counter');
+  qty.innerText = coffeeQty;
+  //qty = coffeeQty;
 }
 
 function clickCoffee(data) {
   // your code here
+  data.coffee += 1;
+  updateCoffeeView(data.coffee);
 }
 
 /**************
@@ -18,14 +24,25 @@ function clickCoffee(data) {
 
 function unlockProducers(producers, coffeeCount) {
   // your code here
+  producers.forEach((producers) => {
+    if(coffeeCount >= (producers.price / 2)){
+      producers.unlocked = true;
+    }
+  });
 }
 
 function getUnlockedProducers(data) {
   // your code here
+  const result = data.producers.filter(producer => producer.unlocked);
+  return result;
 }
 
 function makeDisplayNameFromId(id) {
   // your code here
+  const newStr = id.replaceAll('_', ' ');
+  return newStr.split(' ').map((str) => str[0].toUpperCase() 
+  + str.slice(1).toLowerCase()).join(' ');
+  
 }
 
 // You shouldn't need to edit this function-- its tests should pass once you've written makeDisplayNameFromId
@@ -51,10 +68,18 @@ function makeProducerDiv(producer) {
 
 function deleteAllChildNodes(parent) {
   // your code here
-}
+    while (parent.firstChild) {
+      parent.removeChild(parent.lastChild);
+    }
+  }
 
 function renderProducers(data) {
   // your code here
+  const render = document.getElementById('producer_container');
+  unlockProducers(data.producers, data.coffee);
+  deleteAllChildNodes(render);
+  makeProducerDiv(producer);
+  
 }
 
 /**************
@@ -63,30 +88,53 @@ function renderProducers(data) {
 
 function getProducerById(data, producerId) {
   // your code here
+  //const found = array1.find(element => element > 10);
+  const prodID = data.producers.find(producer => producerId === producer.id);//> price);
+  return prodID;
 }
 
 function canAffordProducer(data, producerId) {
   // your code here
+  const afford = getProducerById(data, producerId).price;
+  return afford;
+  
 }
 
 function updateCPSView(cps) {
   // your code here
+  const coffeeSec = document.getElementById('cps');
+  coffeeSec.innerText = cps;
 }
 
 function updatePrice(oldPrice) {
   // your code here
+  const price = Math.round(oldPrice * 1.25);
+  return price;
 }
 
 function attemptToBuyProducer(data, producerId) {
   // your code here
+  const producer = getProducerById(data, producerId);
+  data.coffee = data.coffee - producer.price;
+  producer.qty += 1;
+  updatePrice(producer.price);
+  data.totalCPS += data.cps;
+  return true;
 }
 
-function buyButtonClick(event, data) {
+
+function buyButtonClick(event, data) { //similar to buy coffee
   // your code here
+  if (event.target.tagName === 'BUTTON') {
+    updateCoffeeView(data.coffee);
+    updateCPSView(data.totalCPS);
+  }
 }
 
-function tick(data) {
+function tick(data) { //add coffee/p second to coffeeQty
   // your code here
+  data.coffee += data.totalCPS;
+  updateCoffeeView(data.coffee);
 }
 
 /*************************
